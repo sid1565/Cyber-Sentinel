@@ -1,0 +1,25 @@
+node_modules/
+dist/
+*.js.map
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+dist-scanner/
+
+# Secrets and local config
+.env
+.env.local
+
+# Logs and Reports
+*.log
+npm-debug.log*
+cyber-sentinel-report.json
+
+# IDE/System files
+.vscode/
+.idea/
+.DS_Store
