@@ -78,9 +78,9 @@ const VULNERABILITY_PATTERNS = [
     type: "Hardcoded Secret",
     severity: "HIGH",
     regex:
-      /[a-z0-9_]*(?:API_KEY|SECRET|PASSWORD|TOKEN|ACCESS_KEY|SECRET_KEY)[a-z0-9_]*\s*[:=]\s*['"`][a-z0-9_\-\.]{12,}['"`]/i,
+      /[a-z0-9_]*(?:API_KEY|SECRET|PASSWORD|PASS|TOKEN|ACCESS_KEY|SECRET_KEY|AUTH_KEY|PRIVATE_KEY|CREDENTIALS)[a-z0-9_]*\s*[:=]\s*['"`][a-z0-9_\-\.]{8,}['"`]/i,
     description:
-      "Potential hardcoded secret or credential found (detected long literal string assigned to a sensitive-looking variable).",
+      "Potential hardcoded secret or credential found (detected literal string assigned to a sensitive-looking key).",
   },
   {
     type: "Insecure Hash Algorithm",
@@ -102,6 +102,45 @@ const VULNERABILITY_PATTERNS = [
     regex: /dangerouslySetInnerHTML/i,
     description:
       "Use of dangerouslySetInnerHTML can lead to DOM-based XSS if the content is not properly sanitized.",
+  },
+  {
+    type: "Path Traversal",
+    severity: "HIGH",
+    regex:
+      /\b(readFile|readFileSync|writeFile|writeFileSync|unlink|unlinkSync|readdir|readdirSync)\s*\(\s*([`'"].*?(\$\{.*?\}|[^'"`]*\+\s*\w+).*?['"`]?)\s*\)/i,
+    description:
+      "Detected potential path traversal: dynamic file path construction with unvalidated concatenated input.",
+  },
+  {
+    type: "Insecure Randomness",
+    severity: "MEDIUM",
+    regex: /Math\.random\s*\(\)/,
+    description:
+      "Math.random() is not cryptographically secure. Use crypto.randomBytes() or crypto.randomInt() for security-sensitive operations.",
+  },
+  {
+    type: "Hardcoded Secret in Function Call",
+    severity: "CRITICAL",
+    regex:
+      /\b(verify|sign|createHmac|createCipheriv|authenticate|login)\s*\(\s*([^,]+\s*,\s*)*['"`][a-z0-9_\-\.]{10,}['"`]\s*[,)]/i,
+    description:
+      "Detected potential hardcoded secret passed directly as a string literal to a security-sensitive function call.",
+  },
+  {
+    type: "Well-known Secret Pattern",
+    severity: "CRITICAL",
+    regex:
+      /((?:AKIA|ABIA|ACCA|ASIA)[0-9A-Z]{16})|(-----BEGIN [A-Z ]+ PRIVATE KEY-----)|(AIza[0-9A-Za-z-_]{35})|(https:\/\/hooks\.slack\.com\/services\/[A-Z0-9]+\/[A-Z0-9]+\/[A-Za-z0-9]+)/,
+    description:
+      "Detected a well-known secret pattern (AWS Key, Google API Key, RSA Private Key, or Slack Webhook).",
+  },
+  {
+    type: "Generic Sensitive Information Disclosure",
+    severity: "HIGH",
+    regex:
+      /\b(?:key|secret|password|pass|token|auth|api|id|sid|access|cred|private|pk|sk)\b\s*[:=]\s*['"`][a-z0-9_\-\.]{10,}['"`]/i,
+    description:
+      "Potential hardcoded credential detected based on sensitive keyword assignment.",
   },
 ];
 

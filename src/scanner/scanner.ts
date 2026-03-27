@@ -143,6 +143,7 @@ async function runAiAnalysis(
         description: v.description,
         file: v.file,
         line: v.line,
+        snippet: v.snippet,
       })),
     },
     null,
